@@ -1,0 +1,97 @@
+import pygame
+import random
+import math
+pygame.init()
+
+
+def dist(xPlanet, yPlanet, xAst, yAst):
+
+    x = xPlanet - xAst
+    y = yPlanet - yAst
+
+    d = math.sqrt((math.pow(x,2) + math.pow(y,2)))
+    r2 = math.pow(d,2)
+    return r2
+
+def forceVect(xPlanet, yPlanet, xAst, yAst, F):
+    #Get Directions
+    dir = [xPlanet - xAst, yPlanet - yAst]
+    #Normalize
+    norm = math.sqrt(dir[0] ** 2 + dir[1] ** 2)
+    dir = [dir[0] / norm, dir[1] / norm]
+    fVect = F * dir
+    print(type(fVect))
+    return fVect
+
+
+dim = 1000
+win = pygame.display.set_mode((dim,dim))
+pygame.display.set_caption("pAuto")
+
+planet = pygame.image.load('planet.png')
+asteroid = pygame.image.load('asteroid.png')
+
+xPlanet = 500
+yPlanet = 500
+mPlanet = 2000
+
+xAst = 100
+yAst = 100
+mAst = 500
+
+#xVelAst = random.randint(-10, 10)
+#yVelAst = random.randint(-10, 10)
+xVelAst = 5
+yVelAst = -2
+
+
+run = True
+while run:
+    pygame.time.delay(100)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run == False
+
+    keys = pygame.key.get_pressed()
+
+
+    #Move Asteroid
+    if xAst >= 0:
+        xAst += xVelAst
+    else:
+        xAst -= xVelAst
+    if yAst <= 0:
+        yAst += yVelAst
+    else:
+        yAst -= yVelAst
+
+
+    #Calculate Force
+    # F = G*m1*m2 / r^2
+    r2 = dist(xPlanet, yPlanet, xAst, yAst)
+    F = mPlanet*mAst / r2
+    print('FORCE: ' , F)
+
+    forceVect(xPlanet, yPlanet, xAst, yAst, F)
+
+
+    if keys[pygame.K_LEFT]:
+        xPlanet -= velPlanet
+    if keys[pygame.K_RIGHT]:
+        xPlanet += velPlanet
+    if keys[pygame.K_UP]:
+        yPlanet -= velPlanet
+    if keys[pygame.K_DOWN]:
+        yPlanet += velPlanet
+
+    win.fill((0,0,0))
+    win.blit(planet,(xPlanet,yPlanet))
+    win.blit(asteroid, (xAst,yAst))
+    pygame.display.flip()
+    pygame.display.update()
+pygame.quit()
+
+
+
+
